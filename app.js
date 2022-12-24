@@ -19,6 +19,7 @@ app.get("/", async function (request, response) {
   }
 });
 
+// eslint-disable-next-line no-undef
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/todos", async function (_request, response) {
