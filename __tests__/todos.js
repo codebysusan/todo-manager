@@ -2,13 +2,14 @@ const request = require("supertest");
 
 const db = require("../models/index");
 const app = require("../app");
+const port = 3000;
 
 let server, agent;
 
 describe("Todo Application", function () {
   beforeAll(async () => {
     await db.sequelize.sync({ force: true });
-    server = app.listen(3000, () => {});
+    server = app.listen(port, () => {});
     agent = request.agent(server);
   });
 
