@@ -9,7 +9,7 @@ app.set("view engine", "ejs");
 
 app.get("/", async function (request, response) {
   const listTodos = await Todo.getTodos();
-  console.log(listTodos);
+  // console.log(listTodos);
   if (request.accepts("html")) {
     response.render("index", {
       listTodos,
@@ -23,7 +23,7 @@ app.get("/", async function (request, response) {
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/todos", async function (_request, response) {
-  console.log("Processing list of all Todos ...");
+  // console.log("Processing list of all Todos ...");
   const todo = await Todo.getTodos();
   return response.json(todo);
 });
@@ -60,7 +60,7 @@ app.put("/todos/:id/markAsCompleted", async function (request, response) {
 });
 
 app.delete("/todos/:id", async function (request, response) {
-  console.log("We have to delete a Todo with ID: ", request.params.id);
+  // console.log("We have to delete a Todo with ID: ", request.params.id);
   const todo = await Todo.destroy({
     where: {
       id: request.params.id,
