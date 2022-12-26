@@ -12,10 +12,11 @@
     <div class="grid grid-cols-6">
       <div class="col-start-3 col-span-2">
         <%- include('header.ejs') %>
-        <form class="mt-4">
+        <form class="mt-4" method="post" action="/todos">
           <div class="flex gap-2">
             <div class="flex-auto">
               <input
+              name="title"
                 class="border border-gray-300 w-full p-2 text-gray-900 rounded text-lg"
                 type="text"
                 placeholder="What's next?"
@@ -24,6 +25,7 @@
             </div>
             <div class="flex-auto">
               <input
+              name="dueDate"
                 type="date"
                 class="border leading-6 border-gray-300 w-full p-2 text-gray-900 rounded text-2xl"
                 required
