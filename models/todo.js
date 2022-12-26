@@ -20,6 +20,14 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed: true });
     }
 
+    static remove(id) {
+      return this.destroy({
+        where: {
+          id,
+        },
+      });
+    }
+
     static getOverdue() {
       return this.findAll({
         where: {

@@ -7,6 +7,36 @@
     <script class="" src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css" />
     <title>My To-DO Application</title>
+    <script>
+        function updateTodo(id){
+          let status = document.getElementById(`overdue-checkbox-${id}`).checked;
+          
+           fetch(`/todos/${id}/markAsCompleted`,{
+              method:"put",
+              headers: {"Content-Type": "application/json"}
+           })
+           .then((res) =>{
+            if(res.ok){
+              window.location.reload();
+            }
+            })
+           .catch((err) => console.log(err))
+        } 
+        function clickHandler(id){
+          let status = document.getElementById(`overdue-checkbox-${id}`).checked;
+          
+           fetch(`/todos/${id}`,{
+              method:"delete",
+              headers: {"Content-Type": "application/json"}
+           })
+           .then((res) =>{
+            if(res.ok){
+              window.location.reload();
+            }
+            })
+           .catch((err) => console.log(err))
+        } 
+    </script>
   </head>
   <body>
     <div class="grid grid-cols-6">
