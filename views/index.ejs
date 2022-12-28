@@ -23,7 +23,7 @@
            .catch((err) => console.log(err))
         } 
         function clickHandler(id){
-          let status = document.getElementById(`overdue-checkbox-${id}`).checked;
+          // let status = document.getElementById(`overdue-checkbox-${id}`).checked;
           
            fetch(`/todos/${id}`,{
               method:"delete",

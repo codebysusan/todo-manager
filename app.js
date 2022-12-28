@@ -23,7 +23,7 @@ app.get("/", async function (request, response) {
       dueLater,
     });
   } else {
-    response.json(listTodos);
+    response.json({ overdue, dueToday, dueLater });
   }
 });
 

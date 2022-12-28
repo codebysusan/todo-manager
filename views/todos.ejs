@@ -7,7 +7,6 @@
     <%= overdue.length %>
   </span>
   
-  
   <ul class="list-none">
     <% for(var i = 0; i < overdue.length; i++){%>
 
@@ -63,18 +62,18 @@
         <input
           class="w-4 h-4 text-blue-600 bg-gray border-gray-300"
           type="checkbox"
-          id="overdue-checkbox-<%= dueToday[i].id%>"
+          id="dueToday-checkbox-<%= dueToday[i].id%>"
           onclick=updateTodo(<%= dueToday[i].id %>)
           <%= dueToday[i].completed ? "checked" : ""  %>
         />
         <label
           class="ml-3 text-sm text-gray-600 cursor-pointer"
-          for="overdue-checkbox-<%= dueToday[i].id%>"
+          for="dueToday-checkbox-<%= dueToday[i].id%>"
           >
           <%= dueToday[i].title  %>
           </label
         >
-        <a href="#" class="ml-2 hidden trash-icon">
+        <a href="#" onclick=clickHandler(<%= dueToday[i].id %>) class="ml-2 hidden trash-icon">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -110,18 +109,18 @@
         <input
           class="w-4 h-4 text-blue-600 bg-gray border-gray-300"
           type="checkbox"
-          id="overdue-checkbox-<%= dueLater[i].id%>"
+          id="dueLater-checkbox-<%= dueLater[i].id%>"
           onclick=updateTodo(<%= dueLater[i].id %>)
           <%= dueLater[i].completed ? "checked" : ""  %>
         />
         <label
           class="ml-3 text-sm text-gray-600 cursor-pointer"
-          for="overdue-checkbox-<%= dueLater[i].id%>"
+          for="dueLater-checkbox-<%= dueLater[i].id%>"
           >
           <%= dueLater[i].title  %>
           </label
         >
-        <a href="#" class="ml-2 hidden trash-icon">
+        <a href="#" onclick=clickHandler(<%= dueLater[i].id %>) class="ml-2 hidden trash-icon">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
