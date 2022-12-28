@@ -1,9 +1,13 @@
 const express = require("express");
 const app = express();
+var csrf = require("csurf");
 const { Todo } = require("./models");
 const bodyParser = require("body-parser");
+var cookieParser = require("cookie-parser");
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser("This is a secret key."));
+app.use(csrf({ cookie: true }));
 
 const path = require("path");
 
@@ -21,6 +25,7 @@ app.get("/", async function (request, response) {
       overdue,
       dueToday,
       dueLater,
+      csrfToken: request.csrfToken(),
     });
   } else {
     response.json({ overdue, dueToday, dueLater });
