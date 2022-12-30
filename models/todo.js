@@ -38,7 +38,9 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.lt]: new Date().toISOString(),
           },
+          completed: false,
         },
+        order: [["id", "ASC"]],
       });
     }
     static getDuetoday() {
@@ -47,7 +49,9 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.eq]: new Date().toISOString(),
           },
+          completed: false,
         },
+        order: [["id", "ASC"]],
       });
     }
     static getDuelater() {
@@ -56,7 +60,9 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.gt]: new Date().toISOString(),
           },
+          completed: false,
         },
+        order: [["id", "ASC"]],
       });
     }
 
