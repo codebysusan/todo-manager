@@ -27,8 +27,6 @@ describe("Todo Application", function () {
     }
   });
 
-  // Creating a todo
-
   test("Creates a todo and responds with json at /todos POST endpoint", async () => {
     const res = await agent.get("/");
     const csrfToken = extractCsrfToken(res);
@@ -40,8 +38,6 @@ describe("Todo Application", function () {
     });
     expect(response.statusCode).toBe(302);
   });
-
-  // markAsCompleted
 
   test("Marks a todo with the given ID as complete", async () => {
     let res = await agent.get("/");
