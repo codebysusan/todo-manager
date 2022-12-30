@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed: true });
     }
 
+    setCompletionStatus(x) {
+      return this.update({ completed: x });
+    }
+
     static remove(id) {
       return this.destroy({
         where: {
@@ -53,6 +57,15 @@ module.exports = (sequelize, DataTypes) => {
             [Op.gt]: new Date().toISOString(),
           },
         },
+      });
+    }
+
+    static getCompleted() {
+      return this.findAll({
+        where: {
+          completed: true,
+        },
+        order: [["id", "ASC"]],
       });
     }
 
