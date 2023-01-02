@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 var csrf = require("tiny-csrf");
-const { Todo } = require("./models");
+const { Todo, User } = require("./models");
 const bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 app.use(bodyParser.json());
@@ -36,6 +36,28 @@ app.get("/", async function (request, response) {
 
 // eslint-disable-next-line no-undef
 app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/signup", (request, response) => {
+  response.render("signup", {
+    title: "Signup",
+    csrfToken: request.csrfToken(),
+  });
+});
+
+app.post("/users", async (request, response) => {
+  // console.log(request.body.email);
+  try {
+    await User.create({
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      email: request.body.email,
+      password: request.body.password,
+    });
+    response.redirect("/");
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 app.get("/todos", async function (_request, response) {
   // console.log("Processing list of all Todos ...");

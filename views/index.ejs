@@ -51,6 +51,9 @@
     <div class="grid grid-cols-6">
       <div class="col-start-3 col-span-2">
         <%- include('header.ejs') %>
+        <p class="py-2">Welcome to To-Do Manager</p>
+        <p class="py-2 ">New Here? <a class="text-green-600" href="/signup">Sign-up Now</a></p>
+        <p class="py-2 ">Already have an account? <a class="text-green-600" href="/login">Sign-in</a></p>
         <form class="mt-4" method="post" action="/todos">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="flex gap-2">
