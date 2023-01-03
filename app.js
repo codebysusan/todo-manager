@@ -9,6 +9,8 @@ const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
 const LocalStrategy = require("passport-local");
 const path = require("path");
+const bcrypt = require("bcrypt");
+const salt = 10;
 
 app.use(bodyParser.json());
 app.use(express.json());
@@ -37,9 +39,14 @@ passport.use(
       passwordField: "password",
     },
     (username, password, done) => {
-      User.findOne({ where: { email: username, password: password } })
-        .then((user) => {
-          return done(null, user);
+      User.findOne({ where: { email: username } })
+        .then(async (user) => {
+          const result = await bcrypt.compare(password, user.password);
+          if (result) {
+            return done(null, user);
+          } else {
+            return done("Invalid Password");
+          }
         })
         .catch((error) => {
           // console.log(error);
@@ -99,21 +106,39 @@ app.get(
   }
 );
 
-app.get("/signup", (request, response) => {
+app.get("/signup", async (request, response) => {
   response.render("signup", {
     title: "Signup",
     csrfToken: request.csrfToken(),
   });
 });
 
+app.get("/login", async (request, response) => {
+  response.render("login", {
+    title: "Login",
+    csrfToken: request.csrfToken(),
+  });
+});
+
+app.post(
+  "/session",
+  passport.authenticate("local", { failureRedirect: "/login" }),
+  (request, response) => {
+    response.redirect("/todos");
+  }
+);
+
 app.post("/users", async (request, response) => {
-  // console.log(request.body.email);
+  // Hash password using bcrypt
+  const hashPassword = await bcrypt.hash(request.body.password, salt);
+
+  // Creating a user here
   try {
     const user = await User.create({
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       email: request.body.email,
-      password: request.body.password,
+      password: hashPassword,
     });
     request.login(user, (err) => {
       if (err) {
