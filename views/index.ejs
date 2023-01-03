@@ -28,7 +28,7 @@
             })
            .catch((err) => console.log(err))
         } 
-        function clickHandler(id){
+        function deleteTodo(id){
           // let status = document.getElementById(`overdue-checkbox-${id}`).checked;
           
            fetch(`/todos/${id}`,{
@@ -81,9 +81,13 @@
             </div>
           </div>
         </form>
+        <div>
 
-        <%- include('todos.ejs') %>
-        
+          <%- include('todos.ejs', { title: "Overdue", data: overDue}) %>
+          <%- include('todos.ejs', { title: "Due Tody", data: dueToday}) %>
+          <%- include('todos.ejs', { title: "Due Later", data: dueLater}) %>
+          <%- include('todos.ejs', { title: "Completed Items", data: completedItems}) %>
+        </div>
     </div>
 
     <%- include('footer.ejs') %>

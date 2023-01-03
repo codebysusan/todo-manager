@@ -15,7 +15,7 @@ app.set("view engine", "ejs");
 
 app.get("/", async function (request, response) {
   const listTodos = await Todo.getTodos();
-  const overdue = await Todo.getOverdue();
+  const overDue = await Todo.getOverdue();
   const dueToday = await Todo.getDuetoday();
   const dueLater = await Todo.getDuelater();
   const completedItems = await Todo.getCompleted();
@@ -23,14 +23,14 @@ app.get("/", async function (request, response) {
   if (request.accepts("html")) {
     response.render("index", {
       listTodos,
-      overdue,
+      overDue,
       dueToday,
       dueLater,
       completedItems,
       csrfToken: request.csrfToken(),
     });
   } else {
-    response.json({ overdue, dueToday, dueLater, completedItems });
+    response.json({ overDue, dueToday, dueLater, completedItems });
   }
 });
 

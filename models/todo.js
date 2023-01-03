@@ -20,8 +20,8 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed: true });
     }
 
-    setCompletionStatus(x) {
-      return this.update({ completed: x });
+    setCompletionStatus(completed) {
+      return this.update({ completed: completed });
     }
 
     static remove(id) {
