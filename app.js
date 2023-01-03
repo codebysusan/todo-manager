@@ -4,38 +4,100 @@ var csrf = require("tiny-csrf");
 const { Todo, User } = require("./models");
 const bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
+const passport = require("passport");
+const connectEnsureLogin = require("connect-ensure-login");
+const session = require("express-session");
+const LocalStrategy = require("passport-local");
+const path = require("path");
+
 app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("This is a secret key."));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
+// eslint-disable-next-line no-undef
+app.use(express.static(path.join(__dirname, "public")));
 
-const path = require("path");
+app.use(
+  session({
+    secret: "my-super-secret-key-368496389505735379271438",
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+    },
+    (username, password, done) => {
+      User.findOne({ where: { email: username, password: password } })
+        .then((user) => {
+          return done(null, user);
+        })
+        .catch((error) => {
+          // console.log(error);
+          return error;
+        });
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  console.log("Serializing user in session", user.id);
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findByPk(id)
+    .then((user) => {
+      done(null, user);
+    })
+    .catch((error) => {
+      // return error;
+      done(error, null);
+    });
+});
 
 app.set("view engine", "ejs");
 
 app.get("/", async function (request, response) {
-  const listTodos = await Todo.getTodos();
-  const overdue = await Todo.getOverdue();
-  const dueToday = await Todo.getDuetoday();
-  const dueLater = await Todo.getDuelater();
-  const completedItems = await Todo.getCompleted();
-  // console.log(listTodos);
-  if (request.accepts("html")) {
-    response.render("index", {
-      listTodos,
-      overdue,
-      dueToday,
-      dueLater,
-      completedItems,
-      csrfToken: request.csrfToken(),
-    });
-  } else {
-    response.json({ overdue, dueToday, dueLater, completedItems });
-  }
+  response.render("index", {
+    title: "Todo application",
+    csrfToken: request.csrfToken(),
+  });
 });
 
-// eslint-disable-next-line no-undef
-app.use(express.static(path.join(__dirname, "public")));
+app.get(
+  "/todos",
+  connectEnsureLogin.ensureLoggedIn(),
+  async function (request, response) {
+    const listTodos = await Todo.getTodos();
+    const overdue = await Todo.getOverdue();
+    const dueToday = await Todo.getDuetoday();
+    const dueLater = await Todo.getDuelater();
+    const completedItems = await Todo.getCompleted();
+    if (request.accepts("html")) {
+      response.render("todos", {
+        title: "Todo application",
+        listTodos,
+        overdue,
+        dueToday,
+        dueLater,
+        completedItems,
+        csrfToken: request.csrfToken(),
+      });
+    } else {
+      response.json({ overdue, dueToday, dueLater, completedItems, listTodos });
+    }
+  }
+);
 
 app.get("/signup", (request, response) => {
   response.render("signup", {
@@ -47,13 +109,18 @@ app.get("/signup", (request, response) => {
 app.post("/users", async (request, response) => {
   // console.log(request.body.email);
   try {
-    await User.create({
+    const user = await User.create({
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       email: request.body.email,
       password: request.body.password,
     });
-    response.redirect("/");
+    request.login(user, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      response.redirect("/todos");
+    });
   } catch (error) {
     console.log(error);
   }
@@ -96,14 +163,13 @@ app.put("/todos/:id", async function (request, response) {
     console.log("Error: " + error);
     return response.status(422).json(error);
   }
-
-  // return response.json(todo);
 });
 
 app.put("/todos/:id/markAsCompleted", async function (request, response) {
   const todo = await Todo.findByPk(request.params.id);
   try {
     const updatedTodo = await todo.markAsCompleted();
+
     return response.json(updatedTodo);
   } catch (error) {
     console.log(error);
