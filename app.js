@@ -175,6 +175,7 @@ app.post("/users", async (request, response) => {
     });
   } catch (error) {
     console.log(error);
+    return response.status(422).json(error);
   }
 });
 
@@ -208,6 +209,14 @@ app.post(
       return response.redirect("/todos");
     } catch (error) {
       console.log(error);
+      if (error.name == "SequelizeValidationError") {
+        request.flash("alert", "Title must contain minimum 5 characters.");
+        return response.redirect("/todos");
+      }
+      if (error.name == "SequelizeDatabaseError") {
+        request.flash("alert", "Please enter valid date.");
+        return response.redirect("/todos");
+      }
       return response.status(422).json(error);
     }
   }
