@@ -27,7 +27,7 @@
             })
            .catch((err) => console.log(err))
         } 
-        function clickHandler(id){
+        function deleteTodo(id){
           
            fetch(`/todos/${id}`,{
               method:"delete",
@@ -80,11 +80,14 @@
             </div>
           </div>
         </form>
+        <div>
+          <%- include('todo.ejs', { title: "Overdue", data: overDue}) %>
+          <%- include('todo.ejs', { title: "Due Tody", data: dueToday}) %>
+          <%- include('todo.ejs', { title: "Due Later", data: dueLater}) %>
+          <%- include('todo.ejs', { title: "Completed Items", data: completedItems}) %>
 
-        <%- include('todo.ejs') %>
-        
+        </div>
     </div>
-
     <%- include('footer.ejs') %>
   </body>
 </html>

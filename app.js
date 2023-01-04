@@ -87,7 +87,7 @@ app.get(
   async function (request, response) {
     const loggedInUserId = request.user.id;
     const listTodos = await Todo.getTodos(loggedInUserId);
-    const overdue = await Todo.getOverdue(loggedInUserId);
+    const overDue = await Todo.getOverdue(loggedInUserId);
     const dueToday = await Todo.getDuetoday(loggedInUserId);
     const dueLater = await Todo.getDuelater(loggedInUserId);
     const completedItems = await Todo.getCompleted(loggedInUserId);
@@ -95,14 +95,14 @@ app.get(
       response.render("todos", {
         title: "Todo application",
         listTodos,
-        overdue,
+        overDue,
         dueToday,
         dueLater,
         completedItems,
         csrfToken: request.csrfToken(),
       });
     } else {
-      response.json({ overdue, dueToday, dueLater, completedItems, listTodos });
+      response.json({ overDue, dueToday, dueLater, completedItems, listTodos });
     }
   }
 );
