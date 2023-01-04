@@ -15,66 +15,75 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
 
-    static addTodo({ title, dueDate }) {
-      return this.create({ title: title, dueDate: dueDate, completed: false });
+    static addTodo({ title, dueDate, userId }) {
+      return this.create({
+        title: title,
+        dueDate: dueDate,
+        completed: false,
+        userId,
+      });
     }
 
     markAsCompleted() {
       return this.update({ completed: true });
     }
 
-    setCompletionStatus(x) {
-      return this.update({ completed: x });
+    setCompletionStatus(completed) {
+      return this.update({ completed });
     }
 
-    static remove(id) {
+    static remove(id, userId) {
       return this.destroy({
         where: {
           id,
+          userId,
         },
       });
     }
 
-    static getOverdue() {
+    static getOverdue(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.lt]: new Date().toISOString(),
           },
           completed: false,
+          userId,
         },
         order: [["id", "ASC"]],
       });
     }
-    static getDuetoday() {
+    static getDuetoday(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.eq]: new Date().toISOString(),
           },
           completed: false,
+          userId,
         },
         order: [["id", "ASC"]],
       });
     }
-    static getDuelater() {
+    static getDuelater(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.gt]: new Date().toISOString(),
           },
           completed: false,
+          userId,
         },
         order: [["id", "ASC"]],
       });
     }
 
-    static getCompleted() {
+    static getCompleted(userId) {
       return this.findAll({
         where: {
           completed: true,
+          userId,
         },
-        order: [["id", "ASC"]],
       });
     }
 
