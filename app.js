@@ -27,6 +27,8 @@ app.use(flash());
 app.use(
   session({
     secret: "my-super-secret-key-368496389505735379271438",
+    saveUninitialized: false,
+    resave: false,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
     },
@@ -81,7 +83,6 @@ passport.deserializeUser((id, done) => {
       done(null, user);
     })
     .catch((error) => {
-      // return error;
       done(error, null);
     });
 });
@@ -167,14 +168,28 @@ app.post("/users", async (request, response) => {
       email: request.body.email,
       password: hashPassword,
     });
-    request.login(user, (err) => {
+    request.logIn(user, (err) => {
       if (err) {
-        console.log(err);
+        console.log("From line 173: " + err);
       }
       response.redirect("/todos");
     });
   } catch (error) {
-    console.log(error);
+    if (error.name == "SequelizeUniqueConstraintError") {
+      request.flash("alert", "Email already in use.");
+      return response.redirect("/signup");
+    }
+    // console.log("From line 180",error);
+    if (error.errors[0].message == "Validation len on firstName failed") {
+      request.flash("alert", "Enter a valid first name.");
+      return response.redirect("/signup");
+    }
+
+    if (error.errors[0].message == "Validation isEmail on email failed") {
+      request.flash("alert", "Enter a valid email.");
+      return response.redirect("/signup");
+    }
+    // console.log("From line :",error.errors[0].message);
     return response.status(422).json(error);
   }
 });

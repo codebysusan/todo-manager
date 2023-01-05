@@ -22,23 +22,24 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: true,
+          len: {
+            min: 1,
+          },
         },
       },
-      lastName: DataTypes.STRING,
+      lastName: {
+        type: DataTypes.STRING,
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notNull: true,
+          isEmail: true,
         },
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: true,
-          len: 8,
-        },
       },
     },
     {
