@@ -76,7 +76,7 @@ describe("Todo Application", function () {
     await agent.post("/todos").send({
       title: "Buy milk",
       dueDate: new Date().toISOString(),
-      completed: true,
+      completed: false,
       _csrf: csrfToken,
     });
 
@@ -91,14 +91,27 @@ describe("Todo Application", function () {
     res = await agent.get("/");
     csrfToken = extractCsrfToken(res);
 
+    const markCompleteResponse = await agent
+      .put(`/todos/${latestTodo.id}`)
+      .send({
+        _csrf: csrfToken,
+        completed: true,
+      });
+
+    const parsedCompletedResponse = JSON.parse(markCompleteResponse.text);
+    expect(parsedCompletedResponse.completed).toBe(true);
+
+    res = await agent.get("/");
+    csrfToken = extractCsrfToken(res);
+
     const markIncompleteResponse = await agent
       .put(`/todos/${latestTodo.id}`)
       .send({
         _csrf: csrfToken,
         completed: false,
       });
-    const parsedUpdateResponse = JSON.parse(markIncompleteResponse.text);
-    expect(parsedUpdateResponse.completed).toBe(false);
+    const parsedIncompletedResponse = JSON.parse(markIncompleteResponse.text);
+    expect(parsedIncompletedResponse.completed).toBe(false);
   });
 
   test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
