@@ -114,7 +114,6 @@ describe("Todo Application", function () {
     await agent.post("/todos").send({
       title: "Buy milk",
       dueDate: new Date().toISOString(),
-      completed: true,
       _csrf: csrfToken,
     });
 
@@ -125,6 +124,18 @@ describe("Todo Application", function () {
     const parsedGroupedResponse = JSON.parse(groupedTodosResponse.text);
     const dueTodayCount = parsedGroupedResponse.dueToday.length;
     const latestTodo = parsedGroupedResponse.dueToday[dueTodayCount - 1];
+
+    res = await agent.get("/todos");
+    csrfToken = extractCsrfToken(res);
+
+    const markCompleteResponse = await agent
+      .put(`/todos/${latestTodo.id}`)
+      .send({
+        _csrf: csrfToken,
+        completed: true,
+      });
+    const parsedCompleteResponse = JSON.parse(markCompleteResponse.text);
+    expect(parsedCompleteResponse.completed).toBe(true);
 
     res = await agent.get("/todos");
     csrfToken = extractCsrfToken(res);
