@@ -9,69 +9,77 @@ module.exports = (sequelize, DataTypes) => {
      */
     // eslint-disable-next-line no-unused-vars
     static associate(models) {
+      Todo.belongsTo(models.User, {
+        foreignKey: "userId",
+      });
       // define association here
     }
 
-    static addTodo({ title, dueDate }) {
-      return this.create({ title: title, dueDate: dueDate, completed: false });
+    static addTodo({ title, dueDate, userId }) {
+      return this.create({
+        title: title,
+        dueDate: dueDate,
+        completed: false,
+        userId,
+      });
     }
-
-    // markAsCompleted() {
-    //   return this.update({ completed: true });
-    // }
 
     setCompletionStatus(completed) {
-      return this.update({ completed: completed });
+      return this.update({ completed });
     }
 
-    static remove(id) {
+    static remove(id, userId) {
       return this.destroy({
         where: {
           id,
+          userId,
         },
       });
     }
 
-    static getOverdue() {
+    static getOverdue(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.lt]: new Date().toISOString(),
           },
           completed: false,
+          userId,
         },
         order: [["id", "ASC"]],
       });
     }
-    static getDuetoday() {
+    static getDuetoday(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.eq]: new Date().toISOString(),
           },
           completed: false,
+          userId,
         },
         order: [["id", "ASC"]],
       });
     }
-    static getDuelater() {
+    static getDuelater(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.gt]: new Date().toISOString(),
           },
           completed: false,
+          userId,
         },
         order: [["id", "ASC"]],
       });
     }
 
-    static getCompleted() {
+    static getCompleted(userId) {
       return this.findAll({
         where: {
           completed: true,
+          userId,
         },
-        order: [["id", "ASC"]],
       });
     }
 
@@ -81,9 +89,25 @@ module.exports = (sequelize, DataTypes) => {
   }
   Todo.init(
     {
-      title: DataTypes.STRING,
-      dueDate: DataTypes.DATEONLY,
-      completed: DataTypes.BOOLEAN,
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: true,
+          len: 5,
+        },
+      },
+      dueDate: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+        validate: {
+          notNull: true,
+        },
+      },
+      completed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
     {
       sequelize,
